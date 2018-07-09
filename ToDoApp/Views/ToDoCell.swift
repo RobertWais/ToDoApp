@@ -17,9 +17,14 @@ class ToDoCell: UITableViewCell {
     @IBOutlet weak var doneBox: UIButton!
     
     @IBAction func onCheckedDone(_ sender: Any){
+        print("Happened: \(doneBox.isSelected)")
         var completeDelete = false
+        
         if doneBox.isSelected {
             completeDelete = true
+        }else{
+            doneBox.tintColor = UIColor.red
+            doneBox.setTitle("Delete",for: .selected)
         }
         doneBox.isSelected = !doneBox.isSelected
         onButtonTapped?(self,completeDelete)
