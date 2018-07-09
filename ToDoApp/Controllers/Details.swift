@@ -55,7 +55,7 @@ class Details: UIViewController {
         switch identifier {
         
         case "save" where toDo != nil :
-            print("Already object")
+            //CURRENT OBJECT
             toDo?.name = titleTextField.text ?? ""
             toDo?.timeCreated = Date()
             toDo?.descriptions = textView.text ?? ""
@@ -63,8 +63,7 @@ class Details: UIViewController {
             destination.tableView.reloadData()
             
         case "save" where toDo == nil :
-            
-            print("new object")
+            //NEW OBJECT
             let item = CoreDataHelper.newToDo()
             item.name = titleTextField.text ?? ""
             item.descriptions = textView.text ?? ""

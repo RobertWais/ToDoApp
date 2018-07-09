@@ -23,7 +23,6 @@ class ToDoCell: UITableViewCell {
         if doneBox.isSelected {
             completeDelete = true
         }else{
-            doneBox.tintColor = UIColor.red
             doneBox.setTitle("Delete",for: .selected)
         }
         doneBox.isSelected = !doneBox.isSelected

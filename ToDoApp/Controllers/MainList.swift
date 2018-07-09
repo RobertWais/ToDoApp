@@ -17,9 +17,13 @@ class MainList: UITableViewController {
         }
     }
     
+    var completed = [Todo]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        list = CoreDataHelper.retrieveToDos()
+        var both = CoreDataHelper.retrieveToDos()
+        self.list = both.0
+        self.completed = both.1
     }
     
     
@@ -34,20 +38,45 @@ class MainList: UITableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 1
+        return 2
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return list.count
+        switch section {
+        case 0 :
+            return list.count
+        case 1 :
+            return completed.count
+        default:
+            return 0
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch section {
+            case 0 :
+                return "Current"
+            case 1 :
+                return "Completed"
+            default :
+                return "error"
+        }
     }
 
-    
-    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoCell", for: indexPath) as! ToDoCell
+        //[indexPath.section][indexPath.row]
+        var toDo: Todo
+        switch indexPath.section {
+            case 0 :
+                toDo = list[indexPath.row]
+            case 1 :
+                toDo = completed[indexPath.row]
+            default :
+                toDo = list[indexPath.row]
+        }
         
-        let toDo = list[indexPath.row]
         cell.titleLbl.text = toDo.name
         cell.postedLbl.text = toDo.timeCreated?.convertToString()
         cell.onButtonTapped = { (cell,delete) in
@@ -56,7 +85,9 @@ class MainList: UITableViewController {
             }
             if delete {
                 CoreDataHelper.delete(toDo: toDo)
-                self.list = CoreDataHelper.retrieveToDos()
+                var both = CoreDataHelper.retrieveToDos()
+                self.list = both.0
+                self.completed = both.1
                 tableView.reloadData()
             } 
         }
@@ -64,15 +95,13 @@ class MainList: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        print("Cell: \(indexPath.row)")
     }
  
     
     @IBAction func unwindWithSegue(_ segue: UIStoryboardSegue){
-        print("Coming back")
-        list = CoreDataHelper.retrieveToDos()
-        print("list count: \(list.count)")
+        var both = CoreDataHelper.retrieveToDos()
+        self.list = both.0
+        self.completed = both.1
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?){
@@ -80,7 +109,17 @@ class MainList: UITableViewController {
         switch identifier {
         case "presentEdit" :
             guard let indexPath = tableView.indexPathForSelectedRow else {return}
-            let toDo = list[indexPath.row]
+            
+            var toDo: Todo
+            switch indexPath.section {
+                case  0 :
+                    toDo = list[indexPath.row]
+                case 1 :
+                    toDo = completed[indexPath.row]
+            default :
+                    toDo = list[indexPath.row]
+            }
+            
             let destination = segue.destination as! Details
             destination.toDo = toDo
             

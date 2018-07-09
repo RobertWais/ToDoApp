@@ -40,19 +40,28 @@ struct CoreDataHelper {
     }
     
     static func delete(toDo: Todo){
-        context.delete(toDo)
+        toDo.completed = true
         saveToDo()
     }
     
-    static func retrieveToDos()->[Todo]{
+    static func retrieveToDos()->([Todo],[Todo]){
         do{
             let fetchRequest = NSFetchRequest<Todo>(entityName:"Todo")
             var results =  try context.fetch(fetchRequest)
+            var completed = [Todo]()
+            var current = [Todo]()
+            for index in 0..<results.count {
+                if results[index].completed == true {
+                    completed.append(results[index])
+                }else{
+                    current.append(results[index])
+                }
+            }
             
-            return results
+            return (current,completed)
         } catch let error {
             print("Error retrieving: \(error.localizedDescription)")
-            return []
+            return ([],[])
         }
     }
     
