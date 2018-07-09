@@ -19,6 +19,7 @@ class MainList: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        list = CoreDataHelper.retrieveToDos()
     }
     
     
@@ -53,7 +54,11 @@ class MainList: UITableViewController {
             guard let indexPath = tableView.indexPath(for: cell) else{
                 return
             }
-            delete ? print("Complete Delete") : print("\(indexPath.row)")
+            if delete {
+                CoreDataHelper.delete(toDo: toDo)
+                self.list = CoreDataHelper.retrieveToDos()
+                tableView.reloadData()
+            } 
         }
         return cell
     }

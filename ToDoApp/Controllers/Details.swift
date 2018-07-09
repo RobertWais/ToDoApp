@@ -25,6 +25,8 @@ class Details: UIViewController {
     override func viewWillAppear(_ animated: Bool){
         super.viewWillAppear(animated)
         
+        
+        
         //Checks to see if were in edit more or delete mode
         if let toDo = toDo {
             titleTextField.text = toDo.name
@@ -52,8 +54,17 @@ class Details: UIViewController {
         
         switch identifier {
         
-        case "save" :
-            print("Here")
+        case "save" where toDo != nil :
+            print("Already object")
+            toDo?.name = titleTextField.text ?? ""
+            toDo?.timeCreated = Date()
+            toDo?.descriptions = textView.text ?? ""
+            
+            destination.tableView.reloadData()
+            
+        case "save" where toDo == nil :
+            
+            print("new object")
             let item = CoreDataHelper.newToDo()
             item.name = titleTextField.text ?? ""
             item.descriptions = textView.text ?? ""
